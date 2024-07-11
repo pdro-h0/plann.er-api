@@ -6,6 +6,7 @@ import { dayjs } from "../../lib/dayjs";
 import { getMailClient } from "../../lib/mail";
 import nodemailer from "nodemailer";
 import { ClientError } from "../errors/client-error";
+import { env } from "../env";
 
 
 export const confirmTrip = async (app: FastifyInstance) => {
@@ -37,7 +38,7 @@ export const confirmTrip = async (app: FastifyInstance) => {
       if (!trip) throw new ClientError("Trip not found");
 
       if (trip.isConfirmed) {
-        return reply.redirect(`http://localhost:8080/trips/${tripId}`);
+        return reply.redirect(`${env.WEB_BASE_URL}/trips/${tripId}`);
       }
 
       await db.trip.update({
@@ -56,7 +57,7 @@ export const confirmTrip = async (app: FastifyInstance) => {
 
       await Promise.all(
         trip.participants.map(async (participant) => {
-          const confirmationLink = `http://localhost:8080/participants/${participant.id}/confirm`;
+          const confirmationLink = `${env.API_BASE_URL}/participants/${participant.id}/confirm`;
 
           const message = await mail.sendMail({
             from: {
@@ -83,7 +84,7 @@ export const confirmTrip = async (app: FastifyInstance) => {
           console.log(nodemailer.getTestMessageUrl(message));
         })
       );
-      return reply.redirect(`http://localhost:8080/trips/${tripId}`);
+      return reply.redirect(`${env.WEB_BASE_URL}/trips/${tripId}`);
     }
   );
 };

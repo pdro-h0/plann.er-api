@@ -6,6 +6,7 @@ import { getMailClient } from "../../lib/mail";
 import nodemailer from "nodemailer";
 import { dayjs } from "../../lib/dayjs";
 import { ClientError } from "../errors/client-error";
+import { env } from "../env";
 
 
 export const createTrip = async (app: FastifyInstance) => {
@@ -67,7 +68,7 @@ export const createTrip = async (app: FastifyInstance) => {
       const formattedStartDate = dayjs(startsAt).format("LL");
       const formattedEndDate = dayjs(endsAt).format("LL");
 
-      const confirmationLink = `http://localhost:8080/trips/${trip.id}/confirm`;
+      const confirmationLink = `${env.API_BASE_URL}/trips/${trip.id}/confirm`;
 
       const mail = await getMailClient();
 
